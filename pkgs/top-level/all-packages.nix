@@ -30153,7 +30153,8 @@ in
 
   pentablet-driver = libsForQt5.callPackage ../misc/drivers/pentablet-driver { };
 
-  qmk_firmware = callPackage ../development/misc/qmk_firmware {
+  qmk_cli = callPackage ../development/misc/qmk/cli.nix { };
+  qmk_firmware = callPackage ../development/misc/qmk/firmware.nix {
     avrgcc = pkgsCross.avr.buildPackages.gcc;
     avrbinutils = pkgsCross.avr.buildPackages.binutils;
     gcc-arm-embedded = pkgsCross.arm-embedded.buildPackages.gcc;
