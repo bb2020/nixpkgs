@@ -23,11 +23,8 @@ python3Packages.buildPythonApplication rec {
 
   postInstall = ''
     mkdir -p $out/share
-    cp ./example/config.py $out/share/example.py
-    cp ${./browser-emacs-bindings.py} $out/share/browser.py
+    cp ${./emacs.py} $out/share/browser.py
 
-    makeWrapper $out/bin/xkeysnail $out/bin/xkeysnail-example \
-      --add-flags "-q" --add-flags "$out/share/example.py"
     makeWrapper $out/bin/xkeysnail $out/bin/xkeysnail-browser \
       --add-flags "-q" --add-flags "$out/share/browser.py"
   '';
