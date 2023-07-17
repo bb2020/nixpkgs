@@ -12,6 +12,7 @@ let
     ++ optional cfg.dnsSingleRequest "single-request"
     ++ optional cfg.dnsExtensionMechanism "edns0"
     ++ optional cfg.useLocalResolver "trust-ad";
+    ++ optional (!config.networking.enableIPv6) "no-aaaa";
 
   configText =
     ''
