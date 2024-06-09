@@ -171,6 +171,9 @@ in
               [](#opt-services.transmission.settings.watch-dir).
             '';
           };
+
+          options.lpd-enabled = mkEnableOption "enable [Local Peer Discovery](https://trac.transmissionbt.com/ticket/3060#comment:39)";
+          options.rename-partial-files = mkEnableOption "postfix .part with partially downloaded files" // { default = true; };
         };
       };
 
