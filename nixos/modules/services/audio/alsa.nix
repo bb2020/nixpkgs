@@ -93,7 +93,7 @@ in
 
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = false;
+      default = true;
       description = ''
         Whether to set up the user space part of the Advanced Linux Sound Architecture (ALSA)
 
@@ -286,8 +286,7 @@ in
 
   options.hardware.alsa.enablePersistence = lib.mkOption {
     type = lib.types.bool;
-    defaultText = lib.literalExpression "config.hardware.alsa.enable";
-    default = config.hardware.alsa.enable;
+    default = false;
     description = ''
       Whether to enable ALSA sound card state saving on shutdown.
       This is generally not necessary if you're using an external sound server.
@@ -297,10 +296,6 @@ in
   config = lib.mkMerge [
 
     (lib.mkIf cfg.enable {
-      # Disable sound servers enabled by default and,
-      # if the user enabled one manually, cause a conflict.
-      services.pipewire.enable = false;
-      services.pulseaudio.enable = false;
 
       hardware.alsa.config =
         let

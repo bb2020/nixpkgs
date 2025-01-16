@@ -14,8 +14,8 @@ in
     services.graphical-desktop.enable =
       lib.mkEnableOption "bits and pieces required for a graphical desktop session"
       // {
-        default = xcfg.enable || dmcfg.enable;
-        defaultText = lib.literalExpression "(config.services.xserver.enable || config.services.displayManager.enable)";
+        default = dmcfg.enable;
+        defaultText = lib.literalExpression "config.services.displayManager.enable";
         internal = true;
       };
   };
@@ -53,15 +53,16 @@ in
 
     programs.gnupg.agent.pinentryPackage = lib.mkOverride 1100 pkgs.pinentry-gnome3;
 
-    services.speechd.enable = lib.mkDefault true;
-
-    services.pipewire = {
-      enable = lib.mkDefault true;
-      pulse.enable = lib.mkDefault true;
-      alsa.enable = lib.mkDefault true;
+    # we have a full desktop environment
+    services = lib.mkIf (dmcfg.sessionPackages != []) {
+      pipewire.enable = lib.mkDefault true;
+      pipewire.pulse.enable = lib.mkDefault true;
+      pipewire.alsa.enable = lib.mkDefault true;
+      speechd.enable = lib.mkDefault true;
+      libinput.enable = lib.mkDefault true;
     };
 
-    systemd.defaultUnit = lib.mkIf (xcfg.autorun || dmcfg.enable) "graphical.target";
+    systemd.defaultUnit = lib.mkIf xcfg.autorun "graphical.target";
 
     xdg = {
       autostart.enable = true;

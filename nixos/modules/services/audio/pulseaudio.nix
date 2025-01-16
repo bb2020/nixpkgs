@@ -226,6 +226,8 @@ in
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
       {
+        hardware.alsa.enable = false;
+
         environment.etc."pulse/client.conf".source = clientConf;
 
         environment.systemPackages = [ overriddenPackage ];

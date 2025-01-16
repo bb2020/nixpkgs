@@ -370,6 +370,8 @@ in
       }
     ];
 
+    hardware.alsa.enable = false;
+
     environment.systemPackages = [ cfg.package ] ++ optional cfg.jack.enable jack-libs;
 
     systemd.packages = [ cfg.package ];
