@@ -18,17 +18,14 @@ in
 
   options.services.minidlna.settings = lib.mkOption {
     default = { };
-    description = "Configuration for {manpage}`minidlna.conf(5)`.";
+    description = "";
     type = lib.types.submodule {
       freeformType = format.type;
 
       options.media_dir = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
-        example = [
-          "/data/media"
-          "V,/home/alice/video"
-        ];
+        example = [ "/data/media" ];
         description = ''
           Directories to be scanned for media files.
           The `A,` `V,` `P,` prefixes restrict a directory to audio, video or image files.
@@ -54,7 +51,7 @@ in
         type = lib.types.path;
         default = "/var/cache/minidlna";
         example = "/tmp/minidlna";
-        description = "Specify the directory to store database and album art cache.";
+        description = "Directory to store database and album art cache.";
       };
       options.friendly_name = lib.mkOption {
         type = lib.types.str;
@@ -67,13 +64,13 @@ in
         type = lib.types.str;
         default = "B";
         example = ".";
-        description = "Use a different container as the root of the directory tree presented to clients.";
+        description = "Root of the directory tree presented to clients.";
       };
       options.log_level = lib.mkOption {
         type = lib.types.str;
         default = "warn";
         example = "general,artwork,database,inotify,scanner,metadata,http,ssdp,tivo=warn";
-        description = "Defines the type of messages that should be logged and down to which level of importance.";
+        description = "Messages to log and their level of importance.";
       };
       options.enable_subtitles = lib.mkOption {
         type = lib.types.enum [
@@ -81,7 +78,7 @@ in
           "no"
         ];
         default = "yes";
-        description = "Enable subtitle support on unknown clients.";
+        description = "Subtitle support on unknown clients.";
       };
       options.inotify = lib.mkOption {
         type = lib.types.enum [
@@ -89,23 +86,7 @@ in
           "no"
         ];
         default = "no";
-        description = "Whether to enable inotify monitoring to automatically discover new files.";
-      };
-      options.enable_tivo = lib.mkOption {
-        type = lib.types.enum [
-          "yes"
-          "no"
-        ];
-        default = "no";
-        description = "Support for streaming .jpg and .mp3 files to a TiVo supporting HMO.";
-      };
-      options.wide_links = lib.mkOption {
-        type = lib.types.enum [
-          "yes"
-          "no"
-        ];
-        default = "no";
-        description = "Set this to yes to allow symlinks that point outside user-defined `media_dir`.";
+        description = "Discover new files automatically.";
       };
     };
   };
