@@ -9,13 +9,6 @@ let
   cfg = config.services.minidlna;
   format = pkgs.formats.keyValue { listsAsDuplicateKeys = true; };
   cfgfile = format.generate "minidlna.conf" cfg.settings;
-
-  # Match a media_dir entry under /home, allowing an optional `A,`/`V,`/`P,`
-  # media-type prefix.
-  mediaDirsUnderHome = lib.any (
-    dir: builtins.match "([AVP],)?/home/.*" dir != null
-  ) cfg.settings.media_dir;
-
 in
 {
   options.services.minidlna.enable = lib.mkEnableOption "MiniDLNA, a simple DLNA server. Consider adding `openFirewall = true` into your config";
@@ -24,17 +17,13 @@ in
 
   options.services.minidlna.settings = lib.mkOption {
     default = { };
-    description = "Configuration for {manpage}`minidlna.conf(5)`.";
+    description = "";
     type = lib.types.submodule {
       freeformType = format.type;
 
       options.media_dir = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        default = [ ];
-        example = [
-          "/data/media"
-          "V,/home/alice/video"
-        ];
+        default = [ "/srv/media" ];
         description = ''
           Directories to be scanned for media files.
           The `A,` `V,` `P,` prefixes restrict a directory to audio, video or image files.
@@ -60,26 +49,25 @@ in
         type = lib.types.path;
         default = "/var/cache/minidlna";
         example = "/tmp/minidlna";
-        description = "Specify the directory to store database and album art cache.";
+        description = "Directory to store database and album art cache.";
       };
       options.friendly_name = lib.mkOption {
         type = lib.types.str;
         default = config.networking.hostName;
         defaultText = lib.literalExpression "config.networking.hostName";
-        example = "rpi3";
         description = "Name that the server presents to clients.";
       };
       options.root_container = lib.mkOption {
         type = lib.types.str;
         default = "B";
         example = ".";
-        description = "Use a different container as the root of the directory tree presented to clients.";
+        description = "Root of the directory tree presented to clients.";
       };
       options.log_level = lib.mkOption {
         type = lib.types.str;
         default = "warn";
-        example = "general,artwork,database,inotify,scanner,metadata,http,ssdp,tivo=warn";
-        description = "Defines the type of messages that should be logged and down to which level of importance.";
+        example = "debug";
+        description = "Type of messages that should be logged.";
       };
       options.enable_subtitles = lib.mkOption {
         type = lib.types.enum [
@@ -87,7 +75,7 @@ in
           "no"
         ];
         default = "yes";
-        description = "Enable subtitle support on unknown clients.";
+        description = "Subtitle support on unknown clients.";
       };
       options.inotify = lib.mkOption {
         type = lib.types.enum [
@@ -95,23 +83,7 @@ in
           "no"
         ];
         default = "no";
-        description = "Whether to enable inotify monitoring to automatically discover new files.";
-      };
-      options.enable_tivo = lib.mkOption {
-        type = lib.types.enum [
-          "yes"
-          "no"
-        ];
-        default = "no";
-        description = "Support for streaming .jpg and .mp3 files to a TiVo supporting HMO.";
-      };
-      options.wide_links = lib.mkOption {
-        type = lib.types.enum [
-          "yes"
-          "no"
-        ];
-        default = "no";
-        description = "Set this to yes to allow symlinks that point outside user-defined `media_dir`.";
+        description = "Automatically discover new files.";
       };
     };
   };
@@ -153,9 +125,9 @@ in
         ProcSubset = "pid";
         ProtectClock = true;
         ProtectControlGroups = true;
-        # Many users keep media under /home; auto-disable ProtectHome when
-        # any media_dir entry is under /home. Override explicitly to force.
-        ProtectHome = lib.mkDefault (!mediaDirsUnderHome);
+        # Many users keep media under /home; override with
+        # `services.minidlna.serviceConfig.ProtectHome = false;` if needed.
+        ProtectHome = lib.mkDefault true;
         ProtectHostname = true;
         ProtectKernelLogs = true;
         ProtectKernelModules = true;
